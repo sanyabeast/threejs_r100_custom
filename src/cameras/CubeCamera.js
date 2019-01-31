@@ -58,8 +58,6 @@ function CubeCamera( near, far, cubeResolution, options ) {
 
 		if ( this.parent === null ) this.updateMatrixWorld();
 
-		var currentRenderTarget = renderer.getRenderTarget();
-
 		var renderTarget = this.renderTarget;
 		var generateMipmaps = renderTarget.texture.generateMipmaps;
 
@@ -85,13 +83,11 @@ function CubeCamera( near, far, cubeResolution, options ) {
 		renderTarget.activeCubeFace = 5;
 		renderer.render( scene, cameraNZ, renderTarget );
 
-		renderer.setRenderTarget( currentRenderTarget );
+		renderer.setRenderTarget( null );
 
 	};
 
 	this.clear = function ( renderer, color, depth, stencil ) {
-
-		var currentRenderTarget = renderer.getRenderTarget();
 
 		var renderTarget = this.renderTarget;
 
@@ -104,7 +100,7 @@ function CubeCamera( near, far, cubeResolution, options ) {
 
 		}
 
-		renderer.setRenderTarget( currentRenderTarget );
+		renderer.setRenderTarget( null );
 
 	};
 

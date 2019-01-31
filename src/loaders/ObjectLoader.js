@@ -497,13 +497,8 @@ Object.assign( ObjectLoader.prototype, {
 
 				} else {
 
-					if ( cache[ data.uuid ] === undefined ) {
-
-						cache[ data.uuid ] = loader.parse( data );
-
-					}
-
-					materials[ data.uuid ] = cache[ data.uuid ];
+					materials[ data.uuid ] = loader.parse( data );
+					cache[ data.uuid ] = materials[ data.uuid ];
 
 				}
 
@@ -849,8 +844,6 @@ Object.assign( ObjectLoader.prototype, {
 					object = new Mesh( geometry, material );
 
 				}
-
-				if ( data.drawMode !== undefined ) object.setDrawMode( data.drawMode );
 
 				break;
 

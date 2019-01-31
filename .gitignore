@@ -8,7 +8,3 @@ npm-debug.log
 .jshintrc
 .vs/
 test/unit/three.*.unit.js
-docs/
-examples/
-test/
-editor/

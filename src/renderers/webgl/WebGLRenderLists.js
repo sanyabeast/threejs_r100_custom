@@ -4,11 +4,7 @@
 
 function painterSortStable( a, b ) {
 
-	if ( a.groupOrder !== b.groupOrder ) {
-
-		return a.groupOrder - b.groupOrder;
-
-	} else if ( a.renderOrder !== b.renderOrder ) {
+	if ( a.renderOrder !== b.renderOrder ) {
 
 		return a.renderOrder - b.renderOrder;
 
@@ -34,11 +30,7 @@ function painterSortStable( a, b ) {
 
 function reversePainterSortStable( a, b ) {
 
-	if ( a.groupOrder !== b.groupOrder ) {
-
-		return a.groupOrder - b.groupOrder;
-
-	} else if ( a.renderOrder !== b.renderOrder ) {
+	if ( a.renderOrder !== b.renderOrder ) {
 
 		return a.renderOrder - b.renderOrder;
 
@@ -72,7 +64,7 @@ function WebGLRenderList() {
 
 	}
 
-	function getNextRenderItem( object, geometry, material, groupOrder, z, group ) {
+	function getNextRenderItem( object, geometry, material, z, group ) {
 
 		var renderItem = renderItems[ renderItemsIndex ];
 
@@ -84,7 +76,6 @@ function WebGLRenderList() {
 				geometry: geometry,
 				material: material,
 				program: material.program,
-				groupOrder: groupOrder,
 				renderOrder: object.renderOrder,
 				z: z,
 				group: group
@@ -99,7 +90,6 @@ function WebGLRenderList() {
 			renderItem.geometry = geometry;
 			renderItem.material = material;
 			renderItem.program = material.program;
-			renderItem.groupOrder = groupOrder;
 			renderItem.renderOrder = object.renderOrder;
 			renderItem.z = z;
 			renderItem.group = group;
@@ -112,17 +102,17 @@ function WebGLRenderList() {
 
 	}
 
-	function push( object, geometry, material, groupOrder, z, group ) {
+	function push( object, geometry, material, z, group ) {
 
-		var renderItem = getNextRenderItem( object, geometry, material, groupOrder, z, group );
+		var renderItem = getNextRenderItem( object, geometry, material, z, group );
 
 		( material.transparent === true ? transparent : opaque ).push( renderItem );
 
 	}
 
-	function unshift( object, geometry, material, groupOrder, z, group ) {
+	function unshift( object, geometry, material, z, group ) {
 
-		var renderItem = getNextRenderItem( object, geometry, material, groupOrder, z, group );
+		var renderItem = getNextRenderItem( object, geometry, material, z, group );
 
 		( material.transparent === true ? transparent : opaque ).unshift( renderItem );
 
@@ -152,16 +142,6 @@ function WebGLRenderLists() {
 
 	var lists = {};
 
-	function onSceneDispose( event ) {
-
-		var scene = event.target;
-
-		scene.removeEventListener( 'dispose', onSceneDispose );
-
-		delete lists[ scene.id ];
-
-	}
-
 	function get( scene, camera ) {
 
 		var cameras = lists[ scene.id ];
@@ -171,8 +151,6 @@ function WebGLRenderLists() {
 			list = new WebGLRenderList();
 			lists[ scene.id ] = {};
 			lists[ scene.id ][ camera.id ] = list;
-
-			scene.addEventListener( 'dispose', onSceneDispose );
 
 		} else {
 

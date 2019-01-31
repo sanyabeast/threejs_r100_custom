@@ -848,7 +848,21 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 	toNonIndexed: function () {
 
-		function convertBufferAttribute( attribute, indices ) {
+		if ( this.index === null ) {
+
+			console.warn( 'THREE.BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+			return this;
+
+		}
+
+		var geometry2 = new BufferGeometry();
+
+		var indices = this.index.array;
+		var attributes = this.attributes;
+
+		for ( var name in attributes ) {
+
+			var attribute = attributes[ name ];
 
 			var array = attribute.array;
 			var itemSize = attribute.itemSize;
@@ -869,60 +883,9 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 			}
 
-			return new BufferAttribute( array2, itemSize );
+			geometry2.addAttribute( name, new BufferAttribute( array2, itemSize ) );
 
 		}
-
-		//
-
-		if ( this.index === null ) {
-
-			console.warn( 'THREE.BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
-			return this;
-
-		}
-
-		var geometry2 = new BufferGeometry();
-
-		var indices = this.index.array;
-		var attributes = this.attributes;
-
-		// attributes
-
-		for ( var name in attributes ) {
-
-			var attribute = attributes[ name ];
-
-			var newAttribute = convertBufferAttribute( attribute, indices );
-
-			geometry2.addAttribute( name, newAttribute );
-
-		}
-
-		// morph attributes
-
-		var morphAttributes = this.morphAttributes;
-
-		for ( name in morphAttributes ) {
-
-			var morphArray = [];
-			var morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
-
-			for ( var i = 0, il = morphAttribute.length; i < il; i ++ ) {
-
-				var attribute = morphAttribute[ i ];
-
-				var newAttribute = convertBufferAttribute( attribute, indices );
-
-				morphArray.push( newAttribute );
-
-			}
-
-			geometry2.morphAttributes[ name ] = morphArray;
-
-		}
-
-		// groups
 
 		var groups = this.groups;
 
