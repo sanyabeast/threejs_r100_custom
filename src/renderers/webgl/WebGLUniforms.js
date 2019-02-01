@@ -167,13 +167,15 @@ function allocTexUnits( renderer, n ) {
 
 // Single scalar
 
-function setValue1f( gl, v ) {
+var stat = { cached: 0, noncached: 0 }
 
+function setValue1f( gl, v ) {
 	v = v.valueOf();
 
 	var cache = this.cache;
 
 	if ( cache[ 0 ] === v ){
+		stat.cached++;
 		return;
 	}
 

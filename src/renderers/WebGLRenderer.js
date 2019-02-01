@@ -649,7 +649,6 @@ function WebGLRenderer( parameters ) {
 	};
 
 	this.renderBufferDirect = function ( camera, fog, geometry, material, object, group ) {
-
 		var frontFaceCW = ( object.isMesh && object.normalMatrix.determinant() < 0 );
 
 		state.setMaterial( material, frontFaceCW );
@@ -1023,11 +1022,11 @@ function WebGLRenderer( parameters ) {
 
 		if ( camera.parent === null ) camera.updateMatrixWorld();
 
-		if ( vr.enabled ) {
+		// if ( vr.enabled ) {
 
-			camera = vr.getCamera( camera );
+		// 	camera = vr.getCamera( camera );
 
-		}
+		// }
 
 		//
 
@@ -1040,7 +1039,7 @@ function WebGLRenderer( parameters ) {
 		_frustum.setFromMatrix( _projScreenMatrix );
 
 		_localClippingEnabled = this.localClippingEnabled;
-		_clippingEnabled = _clipping.init( this.clippingPlanes, _localClippingEnabled, camera );
+		_clippingEnabled = false;
 
 		currentRenderList = renderLists.get( scene, camera );
 		currentRenderList.init();
@@ -1055,15 +1054,16 @@ function WebGLRenderer( parameters ) {
 
 		//
 
-		if ( _clippingEnabled ) _clipping.beginShadows();
 
-		var shadowsArray = currentRenderState.state.shadowsArray;
+		// if ( _clippingEnabled ) _clipping.beginShadows();
 
-		shadowMap.render( shadowsArray, scene, camera );
+		// var shadowsArray = currentRenderState.state.shadowsArray;
 
-		currentRenderState.setupLights( camera );
+		// shadowMap.render( shadowsArray, scene, camera );
 
-		if ( _clippingEnabled ) _clipping.endShadows();
+		// currentRenderState.setupLights( camera );
+
+		// if ( _clippingEnabled ) _clipping.endShadows();
 
 		//
 
@@ -1086,24 +1086,13 @@ function WebGLRenderer( parameters ) {
 		var opaqueObjects = currentRenderList.opaque;
 		var transparentObjects = currentRenderList.transparent;
 
-		if ( scene.overrideMaterial ) {
+		// opaque pass (front-to-back order)
 
-			var overrideMaterial = scene.overrideMaterial;
+		if ( opaqueObjects.length ) renderObjects( opaqueObjects, scene, camera );
 
-			if ( opaqueObjects.length ) renderObjects( opaqueObjects, scene, camera, overrideMaterial );
-			if ( transparentObjects.length ) renderObjects( transparentObjects, scene, camera, overrideMaterial );
+		// transparent pass (back-to-front order)
 
-		} else {
-
-			// opaque pass (front-to-back order)
-
-			if ( opaqueObjects.length ) renderObjects( opaqueObjects, scene, camera );
-
-			// transparent pass (back-to-front order)
-
-			if ( transparentObjects.length ) renderObjects( transparentObjects, scene, camera );
-
-		}
+		if ( transparentObjects.length ) renderObjects( transparentObjects, scene, camera );
 
 		// Generate mipmap if we're using any kind of mipmap filtering
 
@@ -1115,19 +1104,19 @@ function WebGLRenderer( parameters ) {
 
 		// Ensure depth buffer writing is enabled so it can be cleared on next render
 
-		state.buffers.depth.setTest( true );
-		state.buffers.depth.setMask( true );
+		// state.buffers.depth.setTest( true );
+		// state.buffers.depth.setMask( true );
 		state.buffers.color.setMask( true );
 
-		state.setPolygonOffset( false );
+		// state.setPolygonOffset( false );
 
 		scene.onAfterRender( _this, scene, camera );
 
-		if ( vr.enabled ) {
+		// if ( vr.enabled ) {
 
-			vr.submitFrame();
+		// 	vr.submitFrame();
 
-		}
+		// }
 
 		// _gl.finish();
 
@@ -1264,31 +1253,14 @@ function WebGLRenderer( parameters ) {
 
 	function renderObject( object, scene, camera, geometry, material, group ) {
 
-		object.onBeforeRender( _this, scene, camera, geometry, material, group );
+		// object.onBeforeRender( _this, scene, camera, geometry, material, group );
 		currentRenderState = renderStates.get( scene, _currentArrayCamera || camera );
 
 		object.modelViewMatrix.multiplyMatrices( camera.matrixWorldInverse, object.matrixWorld );
-		object.normalMatrix.getNormalMatrix( object.modelViewMatrix );
+		// object.normalMatrix.getNormalMatrix( object.modelViewMatrix );
 
-		if ( object.isImmediateRenderObject ) {
-
-			state.setMaterial( material );
-
-			var program = setProgram( camera, scene.fog, material, object );
-
-			_currentGeometryProgram.geometry = null;
-			_currentGeometryProgram.program = null;
-			_currentGeometryProgram.wireframe = false;
-
-			renderObjectImmediate( object, program );
-
-		} else {
-
-			_this.renderBufferDirect( camera, scene.fog, geometry, material, object, group );
-
-		}
-
-		object.onAfterRender( _this, scene, camera, geometry, material, group );
+		_this.renderBufferDirect( camera, scene.fog, geometry, material, object, group );
+		// object.onAfterRender( _this, scene, camera, geometry, material, group );
 		currentRenderState = renderStates.get( scene, _currentArrayCamera || camera );
 
 	}
@@ -1450,26 +1422,26 @@ function WebGLRenderer( parameters ) {
 		lightsHash.hemiLength = lightsStateHash.hemiLength;
 		lightsHash.shadowsLength = lightsStateHash.shadowsLength;
 
-		if ( material.lights ) {
+		// if ( material.lights ) {
 
-			// wire up the material to this renderer's lighting state
+		// 	// wire up the material to this renderer's lighting state
 
-			uniforms.ambientLightColor.value = lights.state.ambient;
-			uniforms.directionalLights.value = lights.state.directional;
-			uniforms.spotLights.value = lights.state.spot;
-			uniforms.rectAreaLights.value = lights.state.rectArea;
-			uniforms.pointLights.value = lights.state.point;
-			uniforms.hemisphereLights.value = lights.state.hemi;
+		// 	uniforms.ambientLightColor.value = lights.state.ambient;
+		// 	uniforms.directionalLights.value = lights.state.directional;
+		// 	uniforms.spotLights.value = lights.state.spot;
+		// 	uniforms.rectAreaLights.value = lights.state.rectArea;
+		// 	uniforms.pointLights.value = lights.state.point;
+		// 	uniforms.hemisphereLights.value = lights.state.hemi;
 
-			uniforms.directionalShadowMap.value = lights.state.directionalShadowMap;
-			uniforms.directionalShadowMatrix.value = lights.state.directionalShadowMatrix;
-			uniforms.spotShadowMap.value = lights.state.spotShadowMap;
-			uniforms.spotShadowMatrix.value = lights.state.spotShadowMatrix;
-			uniforms.pointShadowMap.value = lights.state.pointShadowMap;
-			uniforms.pointShadowMatrix.value = lights.state.pointShadowMatrix;
-			// TODO (abelnation): add area lights shadow info to uniforms
+		// 	uniforms.directionalShadowMap.value = lights.state.directionalShadowMap;
+		// 	uniforms.directionalShadowMatrix.value = lights.state.directionalShadowMatrix;
+		// 	uniforms.spotShadowMap.value = lights.state.spotShadowMap;
+		// 	uniforms.spotShadowMatrix.value = lights.state.spotShadowMatrix;
+		// 	uniforms.pointShadowMap.value = lights.state.pointShadowMap;
+		// 	uniforms.pointShadowMatrix.value = lights.state.pointShadowMatrix;
+		// 	// TODO (abelnation): add area lights shadow info to uniforms
 
-		}
+		// }
 
 		var progUniforms = materialProperties.program.getUniforms(),
 			uniformsList =
@@ -1480,7 +1452,6 @@ function WebGLRenderer( parameters ) {
 	}
 
 	function setProgram( camera, fog, material, object ) {
-
 		_usedTextureUnits = 0;
 
 		var materialProperties = properties.get( material );
@@ -1489,24 +1460,24 @@ function WebGLRenderer( parameters ) {
 		var lightsHash = materialProperties.lightsHash;
 		var lightsStateHash = lights.state.hash;
 
-		if ( _clippingEnabled ) {
+		// if ( _clippingEnabled ) {
 
-			if ( _localClippingEnabled || camera !== _currentCamera ) {
+		// 	if ( _localClippingEnabled || camera !== _currentCamera ) {
 
-				var useCache =
-					camera === _currentCamera &&
-					material.id === _currentMaterialId;
+		// 		var useCache =
+		// 			camera === _currentCamera &&
+		// 			material.id === _currentMaterialId;
 
-				// we might want to call this function with some ClippingGroup
-				// object instead of the material, once it becomes feasible
-				// (#8465, #8379)
-				_clipping.setState(
-					material.clippingPlanes, material.clipIntersection, material.clipShadows,
-					camera, materialProperties, useCache );
+		// 		// we might want to call this function with some ClippingGroup
+		// 		// object instead of the material, once it becomes feasible
+		// 		// (#8465, #8379)
+		// 		_clipping.setState(
+		// 			material.clippingPlanes, material.clipIntersection, material.clipShadows,
+		// 			camera, materialProperties, useCache );
 
-			}
+		// 	}
 
-		}
+		// }
 
 		if ( material.needsUpdate === false ) {
 
@@ -1532,6 +1503,7 @@ function WebGLRenderer( parameters ) {
 		var program = materialProperties.program,
 			p_uniforms = program.getUniforms(),
 			m_uniforms = materialProperties.shader.uniforms;
+
 
 		if ( state.useProgram( program.program ) ) {
 
