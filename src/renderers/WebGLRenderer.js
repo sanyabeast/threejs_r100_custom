@@ -744,78 +744,50 @@ function WebGLRenderer( parameters ) {
 		//
 
 		if ( object.isMesh ) {
-
-			if ( material.wireframe === true ) {
-
-				state.setLineWidth( material.wireframeLinewidth * getTargetPixelRatio() );
-				renderer.setMode( _gl.LINES );
-
-			} else {
-
-				switch ( object.drawMode ) {
-
-					case TrianglesDrawMode:
-						renderer.setMode( _gl.TRIANGLES );
-						break;
-
-					case TriangleStripDrawMode:
-						renderer.setMode( _gl.TRIANGLE_STRIP );
-						break;
-
-					case TriangleFanDrawMode:
-						renderer.setMode( _gl.TRIANGLE_FAN );
-						break;
-
-				}
-
-			}
-
-
-		} else if ( object.isLine ) {
-
-			var lineWidth = material.linewidth;
-
-			if ( lineWidth === undefined ) lineWidth = 1; // Not using Line*Material
-
-			state.setLineWidth( lineWidth * getTargetPixelRatio() );
-
-			if ( object.isLineSegments ) {
-
-				renderer.setMode( _gl.LINES );
-
-			} else if ( object.isLineLoop ) {
-
-				renderer.setMode( _gl.LINE_LOOP );
-
-			} else {
-
-				renderer.setMode( _gl.LINE_STRIP );
-
-			}
-
-		} else if ( object.isPoints ) {
-
-			renderer.setMode( _gl.POINTS );
-
-		} else if ( object.isSprite ) {
-
 			renderer.setMode( _gl.TRIANGLES );
 
+			// if ( material.wireframe === true ) {
+
+			// 	state.setLineWidth( material.wireframeLinewidth * getTargetPixelRatio() );
+			// 	renderer.setMode( _gl.LINES );
+
+			// } else {
+
+			// 	switch ( object.drawMode ) {
+
+			// 		case TrianglesDrawMode:
+			// 			renderer.setMode( _gl.TRIANGLES );
+			// 			break;
+
+			// 		case TriangleStripDrawMode:
+			// 			renderer.setMode( _gl.TRIANGLE_STRIP );
+			// 			break;
+
+			// 		case TriangleFanDrawMode:
+			// 			renderer.setMode( _gl.TRIANGLE_FAN );
+			// 			break;
+
+			// 	}
+
+			// }
+
+
 		}
 
-		if ( geometry && geometry.isInstancedBufferGeometry ) {
+		// if ( geometry && geometry.isInstancedBufferGeometry ) {
 
-			if ( geometry.maxInstancedCount > 0 ) {
+		// 	if ( geometry.maxInstancedCount > 0 ) {
 
-				renderer.renderInstances( geometry, drawStart, drawCount );
+		// 		renderer.renderInstances( geometry, drawStart, drawCount );
 
-			}
+		// 	}
 
-		} else {
+		// } else {
+			
 
-			renderer.render( drawStart, drawCount );
+		// }
 
-		}
+		renderer.render( drawStart, drawCount );
 
 	};
 
@@ -1172,7 +1144,7 @@ function WebGLRenderer( parameters ) {
 
 		if ( visible ) {
 
-			if ( object.isLight ) {
+			/*if ( object.isLight ) {
 
 				currentRenderState.pushLight( object );
 
@@ -1182,7 +1154,7 @@ function WebGLRenderer( parameters ) {
 
 				}
 
-			} else if ( object.isSprite ) {
+			}*//* else if ( object.isSprite ) {
 
 				if ( ! object.frustumCulled || _frustum.intersectsSprite( object ) ) {
 
@@ -1200,7 +1172,7 @@ function WebGLRenderer( parameters ) {
 
 				}
 
-			} else if ( object.isImmediateRenderObject ) {
+			}*/ /*else if ( object.isImmediateRenderObject ) {
 
 				if ( sortObjects ) {
 
@@ -1211,13 +1183,13 @@ function WebGLRenderer( parameters ) {
 
 				currentRenderList.push( object, null, object.material, _vector3.z, null );
 
-			} else if ( object.isMesh || object.isLine || object.isPoints ) {
+			} *//*else */if ( object.isMesh || object.isLine || object.isPoints ) {
 
-				if ( object.isSkinnedMesh ) {
+				// if ( object.isSkinnedMesh ) {
 
-					object.skeleton.update();
+				// 	object.skeleton.update();
 
-				}
+				// }
 
 				if ( ! object.frustumCulled || _frustum.intersectsObject( object ) ) {
 
@@ -1278,53 +1250,13 @@ function WebGLRenderer( parameters ) {
 
 			var object = renderItem.object;
 			var geometry = renderItem.geometry;
-			var material = overrideMaterial === undefined ? renderItem.material : overrideMaterial;
+			// var material = overrideMaterial === undefined ? renderItem.material : overrideMaterial;
+			var material = renderItem.material;
 			var group = renderItem.group;
 
-			if ( camera.isArrayCamera ) {
+			_currentArrayCamera = null;
 
-				_currentArrayCamera = camera;
-
-				var cameras = camera.cameras;
-
-				for ( var j = 0, jl = cameras.length; j < jl; j ++ ) {
-
-					var camera2 = cameras[ j ];
-
-					if ( object.layers.test( camera2.layers ) ) {
-
-						if ( 'viewport' in camera2 ) { // XR
-
-							state.viewport( _currentViewport.copy( camera2.viewport ) );
-
-						} else {
-
-							var bounds = camera2.bounds;
-
-							var x = bounds.x * _width;
-							var y = bounds.y * _height;
-							var width = bounds.z * _width;
-							var height = bounds.w * _height;
-
-							state.viewport( _currentViewport.set( x, y, width, height ).multiplyScalar( _pixelRatio ) );
-
-						}
-
-						currentRenderState.setupLights( camera2 );
-
-						renderObject( object, scene, camera2, geometry, material, group );
-
-					}
-
-				}
-
-			} else {
-
-				_currentArrayCamera = null;
-
-				renderObject( object, scene, camera, geometry, material, group );
-
-			}
+			renderObject( object, scene, camera, geometry, material, group );
 
 		}
 
@@ -1582,26 +1514,6 @@ function WebGLRenderer( parameters ) {
 
 				material.needsUpdate = true;
 
-			} else if ( material.fog && materialProperties.fog !== fog ) {
-
-				material.needsUpdate = true;
-
-			} else if ( material.lights && ( lightsHash.stateID !== lightsStateHash.stateID ||
-				lightsHash.directionalLength !== lightsStateHash.directionalLength ||
-				lightsHash.pointLength !== lightsStateHash.pointLength ||
-				lightsHash.spotLength !== lightsStateHash.spotLength ||
-				lightsHash.rectAreaLength !== lightsStateHash.rectAreaLength ||
-				lightsHash.hemiLength !== lightsStateHash.hemiLength ||
-				lightsHash.shadowsLength !== lightsStateHash.shadowsLength ) ) {
-
-				material.needsUpdate = true;
-
-			} else if ( materialProperties.numClippingPlanes !== undefined &&
-				( materialProperties.numClippingPlanes !== _clipping.numPlanes ||
-				materialProperties.numIntersection !== _clipping.numIntersection ) ) {
-
-				material.needsUpdate = true;
-
 			}
 
 		}
@@ -1641,25 +1553,25 @@ function WebGLRenderer( parameters ) {
 
 			p_uniforms.setValue( _gl, 'projectionMatrix', camera.projectionMatrix );
 
-			if ( capabilities.logarithmicDepthBuffer ) {
+			// if ( capabilities.logarithmicDepthBuffer ) {
 
-				p_uniforms.setValue( _gl, 'logDepthBufFC',
-					2.0 / ( Math.log( camera.far + 1.0 ) / Math.LN2 ) );
+			// 	p_uniforms.setValue( _gl, 'logDepthBufFC',
+			// 		2.0 / ( Math.log( camera.far + 1.0 ) / Math.LN2 ) );
 
-			}
+			// }
 
-			if ( _currentCamera !== camera ) {
+			// if ( _currentCamera !== camera ) {
 
-				_currentCamera = camera;
+			// 	_currentCamera = camera;
 
-				// lighting uniforms depend on the camera so enforce an update
-				// now, in case this material supports lights - or later, when
-				// the next material that does gets activated:
+			// 	// lighting uniforms depend on the camera so enforce an update
+			// 	// now, in case this material supports lights - or later, when
+			// 	// the next material that does gets activated:
 
-				refreshMaterial = true;		// set to true on material change
-				refreshLights = true;		// remains set until update done
+			// 	refreshMaterial = true;		// set to true on material change
+			// 	refreshLights = true;		// remains set until update done
 
-			}
+			// }
 
 			// load material specific uniforms
 			// (shader material also gets them for the sake of genericity)
@@ -1680,214 +1592,140 @@ function WebGLRenderer( parameters ) {
 
 			}
 
-			if ( material.isMeshPhongMaterial ||
-				material.isMeshLambertMaterial ||
-				material.isMeshBasicMaterial ||
-				material.isMeshStandardMaterial ||
-				material.isShaderMaterial ||
-				material.skinning ) {
+			// if ( material.isMeshPhongMaterial ||
+			// 	material.isMeshLambertMaterial ||
+			// 	material.isMeshBasicMaterial ||
+			// 	material.isMeshStandardMaterial ||
+			// 	material.isShaderMaterial ||
+			// 	material.skinning ) {
 
-				p_uniforms.setValue( _gl, 'viewMatrix', camera.matrixWorldInverse );
+			// 	p_uniforms.setValue( _gl, 'viewMatrix', camera.matrixWorldInverse );
 
-			}
+			// }
 
 		}
 
 		// skinning uniforms must be set even if material didn't change
 		// auto-setting of texture unit for bone texture must go before other textures
 		// not sure why, but otherwise weird things happen
-
-		if ( material.skinning ) {
-
-			p_uniforms.setOptional( _gl, object, 'bindMatrix' );
-			p_uniforms.setOptional( _gl, object, 'bindMatrixInverse' );
-
-			var skeleton = object.skeleton;
-
-			if ( skeleton ) {
-
-				var bones = skeleton.bones;
-
-				if ( capabilities.floatVertexTextures ) {
-
-					if ( skeleton.boneTexture === undefined ) {
-
-						// layout (1 matrix = 4 pixels)
-						//      RGBA RGBA RGBA RGBA (=> column1, column2, column3, column4)
-						//  with  8x8  pixel texture max   16 bones * 4 pixels =  (8 * 8)
-						//       16x16 pixel texture max   64 bones * 4 pixels = (16 * 16)
-						//       32x32 pixel texture max  256 bones * 4 pixels = (32 * 32)
-						//       64x64 pixel texture max 1024 bones * 4 pixels = (64 * 64)
-
-
-						var size = Math.sqrt( bones.length * 4 ); // 4 pixels needed for 1 matrix
-						size = _Math.ceilPowerOfTwo( size );
-						size = Math.max( size, 4 );
-
-						var boneMatrices = new Float32Array( size * size * 4 ); // 4 floats per RGBA pixel
-						boneMatrices.set( skeleton.boneMatrices ); // copy current values
-
-						var boneTexture = new DataTexture( boneMatrices, size, size, RGBAFormat, FloatType );
-						boneTexture.needsUpdate = true;
-
-						skeleton.boneMatrices = boneMatrices;
-						skeleton.boneTexture = boneTexture;
-						skeleton.boneTextureSize = size;
-
-					}
-
-					p_uniforms.setValue( _gl, 'boneTexture', skeleton.boneTexture );
-					p_uniforms.setValue( _gl, 'boneTextureSize', skeleton.boneTextureSize );
-
-				} else {
-
-					p_uniforms.setOptional( _gl, skeleton, 'boneMatrices' );
-
-				}
-
-			}
-
-		}
-
 		if ( refreshMaterial ) {
 
-			p_uniforms.setValue( _gl, 'toneMappingExposure', _this.toneMappingExposure );
-			p_uniforms.setValue( _gl, 'toneMappingWhitePoint', _this.toneMappingWhitePoint );
-
-			if ( material.lights ) {
-
-				// the current material requires lighting info
-
-				// note: all lighting uniforms are always set correctly
-				// they simply reference the renderer's state for their
-				// values
-				//
-				// use the current material's .needsUpdate flags to set
-				// the GL state when required
-
-				markUniformsLightsNeedsUpdate( m_uniforms, refreshLights );
-
-			}
+			// p_uniforms.setValue( _gl, 'toneMappingExposure', _this.toneMappingExposure );
+			// p_uniforms.setValue( _gl, 'toneMappingWhitePoint', _this.toneMappingWhitePoint );
 
 			// refresh uniforms common to several materials
 
-			if ( fog && material.fog ) {
+			// if ( material.isMeshBasicMaterial ) {
 
-				refreshUniformsFog( m_uniforms, fog );
+			// 	refreshUniformsCommon( m_uniforms, material );
 
-			}
+			// } else if ( material.isMeshLambertMaterial ) {
 
-			if ( material.isMeshBasicMaterial ) {
+			// 	refreshUniformsCommon( m_uniforms, material );
+			// 	refreshUniformsLambert( m_uniforms, material );
 
-				refreshUniformsCommon( m_uniforms, material );
+			// } else if ( material.isMeshPhongMaterial ) {
 
-			} else if ( material.isMeshLambertMaterial ) {
+			// 	refreshUniformsCommon( m_uniforms, material );
 
-				refreshUniformsCommon( m_uniforms, material );
-				refreshUniformsLambert( m_uniforms, material );
+			// 	if ( material.isMeshToonMaterial ) {
 
-			} else if ( material.isMeshPhongMaterial ) {
+			// 		refreshUniformsToon( m_uniforms, material );
 
-				refreshUniformsCommon( m_uniforms, material );
+			// 	} else {
 
-				if ( material.isMeshToonMaterial ) {
+			// 		refreshUniformsPhong( m_uniforms, material );
 
-					refreshUniformsToon( m_uniforms, material );
+			// 	}
 
-				} else {
+			// } else if ( material.isMeshStandardMaterial ) {
 
-					refreshUniformsPhong( m_uniforms, material );
+			// 	refreshUniformsCommon( m_uniforms, material );
 
-				}
+			// 	if ( material.isMeshPhysicalMaterial ) {
 
-			} else if ( material.isMeshStandardMaterial ) {
+			// 		refreshUniformsPhysical( m_uniforms, material );
 
-				refreshUniformsCommon( m_uniforms, material );
+			// 	} else {
 
-				if ( material.isMeshPhysicalMaterial ) {
+			// 		refreshUniformsStandard( m_uniforms, material );
 
-					refreshUniformsPhysical( m_uniforms, material );
+			// 	}
 
-				} else {
+			// } else if ( material.isMeshMatcapMaterial ) {
 
-					refreshUniformsStandard( m_uniforms, material );
+			// 	refreshUniformsCommon( m_uniforms, material );
 
-				}
+			// 	refreshUniformsMatcap( m_uniforms, material );
 
-			} else if ( material.isMeshMatcapMaterial ) {
+			// } else if ( material.isMeshDepthMaterial ) {
 
-				refreshUniformsCommon( m_uniforms, material );
+			// 	refreshUniformsCommon( m_uniforms, material );
+			// 	refreshUniformsDepth( m_uniforms, material );
 
-				refreshUniformsMatcap( m_uniforms, material );
+			// } else if ( material.isMeshDistanceMaterial ) {
 
-			} else if ( material.isMeshDepthMaterial ) {
+			// 	refreshUniformsCommon( m_uniforms, material );
+			// 	refreshUniformsDistance( m_uniforms, material );
 
-				refreshUniformsCommon( m_uniforms, material );
-				refreshUniformsDepth( m_uniforms, material );
+			// } else if ( material.isMeshNormalMaterial ) {
 
-			} else if ( material.isMeshDistanceMaterial ) {
+			// 	refreshUniformsCommon( m_uniforms, material );
+			// 	refreshUniformsNormal( m_uniforms, material );
 
-				refreshUniformsCommon( m_uniforms, material );
-				refreshUniformsDistance( m_uniforms, material );
+			// } else if ( material.isLineBasicMaterial ) {
 
-			} else if ( material.isMeshNormalMaterial ) {
+			// 	refreshUniformsLine( m_uniforms, material );
 
-				refreshUniformsCommon( m_uniforms, material );
-				refreshUniformsNormal( m_uniforms, material );
+			// 	if ( material.isLineDashedMaterial ) {
 
-			} else if ( material.isLineBasicMaterial ) {
+			// 		refreshUniformsDash( m_uniforms, material );
 
-				refreshUniformsLine( m_uniforms, material );
+			// 	}
 
-				if ( material.isLineDashedMaterial ) {
+			// } else if ( material.isPointsMaterial ) {
 
-					refreshUniformsDash( m_uniforms, material );
+			// 	refreshUniformsPoints( m_uniforms, material );
 
-				}
+			// } else if ( material.isSpriteMaterial ) {
 
-			} else if ( material.isPointsMaterial ) {
+			// 	refreshUniformsSprites( m_uniforms, material );
 
-				refreshUniformsPoints( m_uniforms, material );
+			// } else if ( material.isShadowMaterial ) {
 
-			} else if ( material.isSpriteMaterial ) {
+			// 	m_uniforms.color.value = material.color;
+			// 	m_uniforms.opacity.value = material.opacity;
 
-				refreshUniformsSprites( m_uniforms, material );
-
-			} else if ( material.isShadowMaterial ) {
-
-				m_uniforms.color.value = material.color;
-				m_uniforms.opacity.value = material.opacity;
-
-			}
+			// }
 
 			// RectAreaLight Texture
 			// TODO (mrdoob): Find a nicer implementation
 
-			if ( m_uniforms.ltc_1 !== undefined ) m_uniforms.ltc_1.value = UniformsLib.LTC_1;
-			if ( m_uniforms.ltc_2 !== undefined ) m_uniforms.ltc_2.value = UniformsLib.LTC_2;
+			// if ( m_uniforms.ltc_1 !== undefined ) m_uniforms.ltc_1.value = UniformsLib.LTC_1;
+			// if ( m_uniforms.ltc_2 !== undefined ) m_uniforms.ltc_2.value = UniformsLib.LTC_2;
 
 			WebGLUniforms.upload( _gl, materialProperties.uniformsList, m_uniforms, _this );
 
 		}
 
-		if ( material.isShaderMaterial && material.uniformsNeedUpdate === true ) {
+		// if ( material.isShaderMaterial && material.uniformsNeedUpdate === true ) {
 
-			WebGLUniforms.upload( _gl, materialProperties.uniformsList, m_uniforms, _this );
-			material.uniformsNeedUpdate = false;
+		// 	WebGLUniforms.upload( _gl, materialProperties.uniformsList, m_uniforms, _this );
+		// 	material.uniformsNeedUpdate = false;
 
-		}
+		// }
 
-		if ( material.isSpriteMaterial ) {
+		// if ( material.isSpriteMaterial ) {
 
-			p_uniforms.setValue( _gl, 'center', object.center );
+		// 	p_uniforms.setValue( _gl, 'center', object.center );
 
-		}
+		// }
 
 		// common matrices
 
 		p_uniforms.setValue( _gl, 'modelViewMatrix', object.modelViewMatrix );
-		p_uniforms.setValue( _gl, 'normalMatrix', object.normalMatrix );
-		p_uniforms.setValue( _gl, 'modelMatrix', object.matrixWorld );
+		// p_uniforms.setValue( _gl, 'normalMatrix', object.normalMatrix );
+		// p_uniforms.setValue( _gl, 'modelMatrix', object.matrixWorld );
 
 		return program;
 

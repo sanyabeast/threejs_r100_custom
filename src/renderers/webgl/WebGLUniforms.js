@@ -169,9 +169,13 @@ function allocTexUnits( renderer, n ) {
 
 function setValue1f( gl, v ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 
-	if ( cache[ 0 ] === v ) return;
+	if ( cache[ 0 ] === v ){
+		return;
+	}
 
 	gl.uniform1f( this.addr, v );
 
@@ -180,6 +184,8 @@ function setValue1f( gl, v ) {
 }
 
 function setValue1i( gl, v ) {
+
+	v = v.valueOf();
 
 	var cache = this.cache;
 
@@ -194,6 +200,8 @@ function setValue1i( gl, v ) {
 // Single float vector (from flat array or THREE.VectorN)
 
 function setValue2fv( gl, v ) {
+
+	v = v.valueOf();
 
 	var cache = this.cache;
 
@@ -221,6 +229,8 @@ function setValue2fv( gl, v ) {
 }
 
 function setValue3fv( gl, v ) {
+
+	v = v.valueOf();
 
 	var cache = this.cache;
 
@@ -262,6 +272,8 @@ function setValue3fv( gl, v ) {
 
 function setValue4fv( gl, v ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 
 	if ( v.x !== undefined ) {
@@ -293,6 +305,8 @@ function setValue4fv( gl, v ) {
 
 function setValue2fm( gl, v ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 	var elements = v.elements;
 
@@ -320,6 +334,8 @@ function setValue2fm( gl, v ) {
 
 function setValue3fm( gl, v ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 	var elements = v.elements;
 
@@ -346,6 +362,8 @@ function setValue3fm( gl, v ) {
 }
 
 function setValue4fm( gl, v ) {
+
+	v = v.valueOf();
 
 	var cache = this.cache;
 	var elements = v.elements;
@@ -376,6 +394,8 @@ function setValue4fm( gl, v ) {
 
 function setValueT1( gl, v, renderer ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 	var unit = renderer.allocTextureUnit();
 
@@ -392,6 +412,8 @@ function setValueT1( gl, v, renderer ) {
 
 function setValueT3D1( gl, v, renderer ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 	var unit = renderer.allocTextureUnit();
 
@@ -407,6 +429,8 @@ function setValueT3D1( gl, v, renderer ) {
 }
 
 function setValueT6( gl, v, renderer ) {
+
+	v = v.valueOf();
 
 	var cache = this.cache;
 	var unit = renderer.allocTextureUnit();
@@ -426,6 +450,8 @@ function setValueT6( gl, v, renderer ) {
 
 function setValue2iv( gl, v ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 
 	if ( arraysEqual( cache, v ) ) return;
@@ -438,6 +464,8 @@ function setValue2iv( gl, v ) {
 
 function setValue3iv( gl, v ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 
 	if ( arraysEqual( cache, v ) ) return;
@@ -449,6 +477,8 @@ function setValue3iv( gl, v ) {
 }
 
 function setValue4iv( gl, v ) {
+
+	v = v.valueOf();
 
 	var cache = this.cache;
 
@@ -492,6 +522,8 @@ function getSingularSetter( type ) {
 
 function setValue1fv( gl, v ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 
 	if ( arraysEqual( cache, v ) ) return;
@@ -502,6 +534,8 @@ function setValue1fv( gl, v ) {
 
 }
 function setValue1iv( gl, v ) {
+
+	v = v.valueOf();
 
 	var cache = this.cache;
 
@@ -517,6 +551,8 @@ function setValue1iv( gl, v ) {
 
 function setValueV2a( gl, v ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 	var data = flatten( v, this.size, 2 );
 
@@ -530,6 +566,8 @@ function setValueV2a( gl, v ) {
 
 function setValueV3a( gl, v ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 	var data = flatten( v, this.size, 3 );
 
@@ -542,6 +580,8 @@ function setValueV3a( gl, v ) {
 }
 
 function setValueV4a( gl, v ) {
+
+	v = v.valueOf();
 
 	var cache = this.cache;
 	var data = flatten( v, this.size, 4 );
@@ -558,6 +598,8 @@ function setValueV4a( gl, v ) {
 
 function setValueM2a( gl, v ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 	var data = flatten( v, this.size, 4 );
 
@@ -571,6 +613,8 @@ function setValueM2a( gl, v ) {
 
 function setValueM3a( gl, v ) {
 
+	v = v.valueOf();
+
 	var cache = this.cache;
 	var data = flatten( v, this.size, 9 );
 
@@ -583,6 +627,8 @@ function setValueM3a( gl, v ) {
 }
 
 function setValueM4a( gl, v ) {
+
+	v = v.valueOf();
 
 	var cache = this.cache;
 	var data = flatten( v, this.size, 16 );
@@ -598,6 +644,8 @@ function setValueM4a( gl, v ) {
 // Array of textures (2D / Cube)
 
 function setValueT1a( gl, v, renderer ) {
+
+	v = v.valueOf();
 
 	var cache = this.cache;
 	var n = v.length;
@@ -620,6 +668,8 @@ function setValueT1a( gl, v, renderer ) {
 }
 
 function setValueT6a( gl, v, renderer ) {
+
+	v = v.valueOf();
 
 	var cache = this.cache;
 	var n = v.length;
