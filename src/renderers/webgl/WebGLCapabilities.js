@@ -27,7 +27,6 @@ function WebGLCapabilities( gl, extensions, parameters ) {
 	}
 
 	function getMaxPrecision( precision ) {
-
 		if ( precision === 'highp' ) {
 
 			if ( gl.getShaderPrecisionFormat( gl.VERTEX_SHADER, gl.HIGH_FLOAT ).precision > 0 &&

@@ -183,54 +183,47 @@ function WebGLRenderer( parameters ) {
 
 	var _gl;
 
-	try {
+	var contextAttributes = {
+		alpha: _alpha,
+		depth: _depth,
+		stencil: _stencil,
+		antialias: _antialias,
+		premultipliedAlpha: _premultipliedAlpha,
+		preserveDrawingBuffer: _preserveDrawingBuffer,
+		// powerPreference: _powerPreference
+	};
 
-		var contextAttributes = {
-			alpha: _alpha,
-			depth: _depth,
-			stencil: _stencil,
-			antialias: _antialias,
-			premultipliedAlpha: _premultipliedAlpha,
-			preserveDrawingBuffer: _preserveDrawingBuffer,
-			powerPreference: _powerPreference
+	// event listeners must be registered before WebGL context is created, see #12753
+
+	_canvas.addEventListener( 'webglcontextlost', onContextLost, false );
+	_canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
+
+	_gl = _context || _canvas.getContext( 'webgl', contextAttributes ) || _canvas.getContext( 'experimental-webgl', contextAttributes );
+
+	if ( _gl === null ) {
+
+		if ( _canvas.getContext( 'webgl' ) !== null ) {
+
+			throw new Error( 'Error creating WebGL context with your selected attributes.' );
+
+		} else {
+
+			throw new Error( 'Error creating WebGL context.' );
+
+		}
+
+	}
+
+	// Some experimental-webgl implementations do not have getShaderPrecisionFormat
+
+
+	if ( _gl.getShaderPrecisionFormat === undefined ) {
+
+		_gl.getShaderPrecisionFormat = function () {
+
+			return { 'rangeMin': 1, 'rangeMax': 1, 'precision': 1 };
+
 		};
-
-		// event listeners must be registered before WebGL context is created, see #12753
-
-		_canvas.addEventListener( 'webglcontextlost', onContextLost, false );
-		_canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
-
-		_gl = _context || _canvas.getContext( 'webgl', contextAttributes ) || _canvas.getContext( 'experimental-webgl', contextAttributes );
-
-		if ( _gl === null ) {
-
-			if ( _canvas.getContext( 'webgl' ) !== null ) {
-
-				throw new Error( 'Error creating WebGL context with your selected attributes.' );
-
-			} else {
-
-				throw new Error( 'Error creating WebGL context.' );
-
-			}
-
-		}
-
-		// Some experimental-webgl implementations do not have getShaderPrecisionFormat
-
-		if ( _gl.getShaderPrecisionFormat === undefined ) {
-
-			_gl.getShaderPrecisionFormat = function () {
-
-				return { 'rangeMin': 1, 'rangeMax': 1, 'precision': 1 };
-
-			};
-
-		}
-
-	} catch ( error ) {
-
-		console.error( 'THREE.WebGLRenderer: ' + error.message );
 
 	}
 
@@ -243,7 +236,6 @@ function WebGLRenderer( parameters ) {
 	var utils;
 
 	function initGLContext() {
-
 		extensions = new WebGLExtensions( _gl );
 
 		capabilities = new WebGLCapabilities( _gl, extensions, parameters );
