@@ -28,7 +28,7 @@ export { Group } from './objects/Group.js';
 // export { CubeTexture } from './textures/CubeTexture.js';
 export { CanvasTexture } from './textures/CanvasTexture.js';
 // export { DepthTexture } from './textures/DepthTexture.js';
-// export { Texture } from './textures/Texture.js';
+export { Texture } from './textures/Texture.js';
 export * from './geometries/Geometries.js';
 export * from './materials/Materials.js';
 // export { AnimationLoader } from './loaders/AnimationLoader.js';
