@@ -897,7 +897,12 @@ WebGLUniforms.upload = function ( gl, seq, values, renderer ) {
 		var u = seq[ i ],
 			v = values[ u.id ];
 
-		u.setValue( gl, v.value, renderer );
+		if (v.needsUpdate !== false){
+			u.setValue( gl, v.value, renderer );
+			if (v.needsUpdate === true){
+				v.needsUpdate = false;
+			}
+		}
 
 	}
 
