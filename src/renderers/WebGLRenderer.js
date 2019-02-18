@@ -641,17 +641,15 @@ function WebGLRenderer( parameters ) {
 	};
 
 	this.renderBufferDirect = function ( camera, fog, geometry, material, object, group ) {
-		var frontFaceCW = ( object.isMesh && object.normalMatrix.determinant() < 0 );
+		// var frontFaceCW = ( object.isMesh && object.normalMatrix.determinant() < 0 );
 
-		state.setMaterial( material, frontFaceCW );
+		state.setMaterial( material, false );
 
 		var program = setProgram( camera, fog, material, object );
 
 		var updateBuffers = false;
 
-		if ( _currentGeometryProgram.geometry !== geometry.id ||
-			_currentGeometryProgram.program !== program.id ||
-			_currentGeometryProgram.wireframe !== ( material.wireframe === true ) ) {
+		if ( _currentGeometryProgram.geometry !== geometry.id ) {
 
 			_currentGeometryProgram.geometry = geometry.id;
 			_currentGeometryProgram.program = program.id;
@@ -660,13 +658,13 @@ function WebGLRenderer( parameters ) {
 
 		}
 
-		if ( object.morphTargetInfluences ) {
+		// if ( object.morphTargetInfluences ) {
 
-			morphtargets.update( object, geometry, material, program );
+		// 	morphtargets.update( object, geometry, material, program );
 
-			updateBuffers = true;
+		// 	updateBuffers = true;
 
-		}
+		// }
 
 		//
 
@@ -674,12 +672,12 @@ function WebGLRenderer( parameters ) {
 		var position = geometry.attributes.position;
 		var rangeFactor = 1;
 
-		if ( material.wireframe === true ) {
+		// if ( material.wireframe === true ) {
 
-			index = geometries.getWireframeAttribute( geometry );
-			rangeFactor = 2;
+		// 	index = geometries.getWireframeAttribute( geometry );
+		// 	rangeFactor = 2;
 
-		}
+		// }
 
 		var attribute;
 		var renderer = bufferRenderer;
@@ -1285,7 +1283,7 @@ function WebGLRenderer( parameters ) {
 			// changed glsl or parameters
 			releaseMaterialProgramReference( material );
 
-		} else if ( lightsHash.stateID !== lightsStateHash.stateID ||
+		}/* else if ( lightsHash.stateID !== lightsStateHash.stateID ||
 			lightsHash.directionalLength !== lightsStateHash.directionalLength ||
 			lightsHash.pointLength !== lightsStateHash.pointLength ||
 			lightsHash.spotLength !== lightsStateHash.spotLength ||
@@ -1303,7 +1301,7 @@ function WebGLRenderer( parameters ) {
 
 			programChange = false;
 
-		} else if ( parameters.shaderID !== undefined ) {
+		} */else if ( parameters.shaderID !== undefined ) {
 
 			// same glsl and uniform list
 			return;
@@ -1339,7 +1337,7 @@ function WebGLRenderer( parameters ) {
 
 			}
 
-			material.onBeforeCompile( materialProperties.shader, _this );
+			// material.onBeforeCompile( materialProperties.shader, _this );
 
 			// Computing code again as onBeforeCompile may have changed the shaders
 			code = programCache.getProgramCode( material, parameters );
@@ -1351,68 +1349,68 @@ function WebGLRenderer( parameters ) {
 
 		}
 
-		var programAttributes = program.getAttributes();
+		// var programAttributes = program.getAttributes();
 
-		if ( material.morphTargets ) {
+		// if ( material.morphTargets ) {
 
-			material.numSupportedMorphTargets = 0;
+		// 	material.numSupportedMorphTargets = 0;
 
-			for ( var i = 0; i < _this.maxMorphTargets; i ++ ) {
+		// 	for ( var i = 0; i < _this.maxMorphTargets; i ++ ) {
 
-				if ( programAttributes[ 'morphTarget' + i ] >= 0 ) {
+		// 		if ( programAttributes[ 'morphTarget' + i ] >= 0 ) {
 
-					material.numSupportedMorphTargets ++;
+		// 			material.numSupportedMorphTargets ++;
 
-				}
+		// 		}
 
-			}
+		// 	}
 
-		}
+		// }
 
-		if ( material.morphNormals ) {
+		// if ( material.morphNormals ) {
 
-			material.numSupportedMorphNormals = 0;
+		// 	material.numSupportedMorphNormals = 0;
 
-			for ( var i = 0; i < _this.maxMorphNormals; i ++ ) {
+		// 	for ( var i = 0; i < _this.maxMorphNormals; i ++ ) {
 
-				if ( programAttributes[ 'morphNormal' + i ] >= 0 ) {
+		// 		if ( programAttributes[ 'morphNormal' + i ] >= 0 ) {
 
-					material.numSupportedMorphNormals ++;
+		// 			material.numSupportedMorphNormals ++;
 
-				}
+		// 		}
 
-			}
+		// 	}
 
-		}
+		// }
 
 		var uniforms = materialProperties.shader.uniforms;
 
-		if ( ! material.isShaderMaterial &&
-			! material.isRawShaderMaterial ||
-			material.clipping === true ) {
+		// if ( ! material.isShaderMaterial &&
+		// 	! material.isRawShaderMaterial ||
+		// 	material.clipping === true ) {
 
-			materialProperties.numClippingPlanes = _clipping.numPlanes;
-			materialProperties.numIntersection = _clipping.numIntersection;
-			uniforms.clippingPlanes = _clipping.uniform;
+		// 	materialProperties.numClippingPlanes = _clipping.numPlanes;
+		// 	materialProperties.numIntersection = _clipping.numIntersection;
+		// 	uniforms.clippingPlanes = _clipping.uniform;
 
-		}
+		// }
 
-		materialProperties.fog = fog;
+		// materialProperties.fog = fog;
 
 		// store the light setup it was created for
-		if ( lightsHash === undefined ) {
+		// if ( lightsHash === undefined ) {
 
-			materialProperties.lightsHash = lightsHash = {};
+		// 	materialProperties.lightsHash = lightsHash = {};
 
-		}
+		// }
 
-		lightsHash.stateID = lightsStateHash.stateID;
-		lightsHash.directionalLength = lightsStateHash.directionalLength;
-		lightsHash.pointLength = lightsStateHash.pointLength;
-		lightsHash.spotLength = lightsStateHash.spotLength;
-		lightsHash.rectAreaLength = lightsStateHash.rectAreaLength;
-		lightsHash.hemiLength = lightsStateHash.hemiLength;
-		lightsHash.shadowsLength = lightsStateHash.shadowsLength;
+		// lightsHash.stateID = lightsStateHash.stateID;
+		// lightsHash.directionalLength = lightsStateHash.directionalLength;
+		// lightsHash.pointLength = lightsStateHash.pointLength;
+		// lightsHash.spotLength = lightsStateHash.spotLength;
+		// lightsHash.rectAreaLength = lightsStateHash.rectAreaLength;
+		// lightsHash.hemiLength = lightsStateHash.hemiLength;
+		// lightsHash.shadowsLength = lightsStateHash.shadowsLength;
 
 		// if ( material.lights ) {
 
@@ -1445,6 +1443,8 @@ function WebGLRenderer( parameters ) {
 
 	function setProgram( camera, fog, material, object ) {
 		_usedTextureUnits = 0;
+
+		// console.log(material, object)
 
 		var materialProperties = properties.get( material );
 		var lights = currentRenderState.state.lights;

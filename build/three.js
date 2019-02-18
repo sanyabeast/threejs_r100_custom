@@ -16409,7 +16409,11 @@
 
 		this.id = id;
 		this.addr = addr;
-		this.cache = [];
+		this.cache = new Proxy([], {
+			get: function(){
+				return undefined;
+			}
+		});
 		this.setValue = getSingularSetter( activeInfo.type );
 
 		// this.path = activeInfo.name; // DEBUG
@@ -16420,7 +16424,11 @@
 
 		this.id = id;
 		this.addr = addr;
-		this.cache = [];
+		this.cache = new Proxy([], {
+			get: function(){
+				return undefined;
+			}
+		});
 		this.size = activeInfo.size;
 		this.setValue = getPureArraySetter( activeInfo.type );
 

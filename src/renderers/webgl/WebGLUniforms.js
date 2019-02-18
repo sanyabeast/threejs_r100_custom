@@ -717,7 +717,6 @@ function getPureArraySetter( type ) {
 		case 0x8b55: case 0x8b59: return setValue4iv; // _VEC4
 
 	}
-
 }
 
 // --- Uniform Classes ---
@@ -893,18 +892,12 @@ WebGLUniforms.prototype.setOptional = function ( gl, object, name ) {
 // Static interface
 
 WebGLUniforms.upload = function ( gl, seq, values, renderer ) {
-
 	for ( var i = 0, n = seq.length; i !== n; ++ i ) {
 
 		var u = seq[ i ],
 			v = values[ u.id ];
 
-		if ( v.needsUpdate !== false ) {
-
-			// note: always updating when .needsUpdate is undefined
-			u.setValue( gl, v.value, renderer );
-
-		}
+		u.setValue( gl, v.value, renderer );
 
 	}
 
