@@ -408,6 +408,7 @@ function setValueT1( gl, v, renderer ) {
 
 	}
 
+	
 	renderer.setTexture2D( v || emptyTexture, unit );
 
 }
@@ -898,6 +899,7 @@ WebGLUniforms.upload = function ( gl, seq, values, renderer ) {
 			v = values[ u.id ];
 
 		if (v.needsUpdate !== false){
+
 			u.setValue( gl, v.value, renderer );
 			if (v.needsUpdate === true){
 				v.needsUpdate = false;
