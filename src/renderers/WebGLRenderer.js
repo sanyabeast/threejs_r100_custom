@@ -1107,7 +1107,7 @@ function WebGLRenderer( parameters ) {
 
 		// state.setPolygonOffset( false );
 
-		scene.onAfterRender( _this, scene, camera );
+		// scene.onAfterRender( _this, scene, camera );
 
 		// if ( vr.enabled ) {
 
@@ -1126,7 +1126,8 @@ function WebGLRenderer( parameters ) {
 
 		if ( object.visible === false ) return;
 
-		var visible = object.layers.test( camera.layers );
+		// var visible = object.layers.test( camera.layers );
+		var visible = object.visible
 
 		if ( visible ) {
 
@@ -1169,7 +1170,7 @@ function WebGLRenderer( parameters ) {
 
 				currentRenderList.push( object, null, object.material, _vector3.z, null );
 
-			} *//*else */if ( object.isMesh || object.isLine || object.isPoints ) {
+			} *//*else */if ( object.isMesh ) {
 
 				// if ( object.isSkinnedMesh ) {
 
@@ -1181,8 +1182,7 @@ function WebGLRenderer( parameters ) {
 
 					if ( sortObjects ) {
 
-						_vector3.setFromMatrixPosition( object.matrixWorld )
-							.applyMatrix4( _projScreenMatrix );
+						_vector3.setFromMatrixPosition( object.matrixWorld ).applyMatrix4( _projScreenMatrix );
 
 					}
 
@@ -1216,15 +1216,17 @@ function WebGLRenderer( parameters ) {
 
 			}
 
+			var children = object.children;
+
+			for ( var i = 0, l = children.length; i < l; i ++ ) {
+
+				projectObject( children[ i ], camera, sortObjects );
+
+			}
+
 		}
 
-		var children = object.children;
-
-		for ( var i = 0, l = children.length; i < l; i ++ ) {
-
-			projectObject( children[ i ], camera, sortObjects );
-
-		}
+		
 
 	}
 

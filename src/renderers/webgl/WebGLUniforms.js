@@ -901,6 +901,7 @@ WebGLUniforms.upload = function ( gl, seq, values, renderer ) {
 		if (v.needsUpdate !== false){
 
 			u.setValue( gl, v.value, renderer );
+			
 			if (v.needsUpdate === true){
 				v.needsUpdate = false;
 			}
