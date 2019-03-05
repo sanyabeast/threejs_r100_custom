@@ -184,12 +184,12 @@ function WebGLRenderer( parameters ) {
 	var _gl;
 
 	var contextAttributes = {
-		alpha: _alpha,
-		depth: _depth,
-		stencil: _stencil,
+		alpha: false,
+		depth: false,
+		stencil: false,
 		antialias: _antialias,
-		premultipliedAlpha: _premultipliedAlpha,
-		preserveDrawingBuffer: _preserveDrawingBuffer,
+		premultipliedAlpha: false,
+		preserveDrawingBuffer: true,
 		// powerPreference: _powerPreference
 	};
 
